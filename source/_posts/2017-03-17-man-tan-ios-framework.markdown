@@ -113,7 +113,7 @@ label.text = text;
 
 模拟Framework在实际项目中的引用，其实就是将Framework和Resource Bundle拷贝到目标项目，并加入Target中。于是我们编写了一个shell script，在Framework项目编译完成之后把生成的文件copy到Demo项目中。
 
-```
+```bash
 #! /bin/bash
 
 FRAMEWORK_PATH="${TARGET_BUILD_DIR}/${FULL_PRODUCT_NAME}"
@@ -126,7 +126,7 @@ cp -r "${FRAMEWORK_PATH}/${PROJECT}.bundle" "${PROJECT_DIR}/../${PROJECT}Demo/"
 
 同时我们在Demo项目的Build Phases中也添加一个脚本，并放在`Compile Source`之前执行
 
-```
+```bash
 #! /bin/bash
 
 FRAMEWORK_DIR="${PROJECT_DIR}/../${FRAMEWORK_NAME}/"
@@ -160,6 +160,8 @@ fi
 我们可以编写脚本，使用xcodebuild工具进行自动化打包，生成可以对外发布的Framework。
 
 ```python
+import os
+
 commandStriPhone = 'xcodebuild -target '+Scheme+' ONLY_ACTIVE_ARCH=NO -configuration Release -sdk iphoneos BUILD_DIR="' + BUILD_DIR + '"'
 
 commsndStrSimulator = 'xcodebuild -target '+Scheme+' ONLY_ACTIVE_ARCH=NO -configuration Release -sdk iphonesimulator BUILD_DIR="'+BUILD_DIR+'"'
@@ -173,6 +175,8 @@ os.system(commsndStrSimulator)
 我们可以用`Lipo`命令，将这两个可执行文件合并成一个。
 
 ```python
+import os
+
 lipoStr = 'lipo -create -output "'+BUILD_DIR+Scheme+'" "'+BUILD_DIR+'Release-iphoneos/'+Scheme+'.framework/'+Scheme+'" "'+BUILD_DIR+'Release-iphonesimulator/'+Scheme+'.framework/'+Scheme+'"'
 
 os.system(lipoStr)
